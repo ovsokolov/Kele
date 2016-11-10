@@ -1,4 +1,5 @@
 require 'httparty'
+require 'json'
 require_relative './errors/bloc_io_error'
 
 class Kele
@@ -11,5 +12,10 @@ class Kele
     result = self.class.post('/sessions', :body => {"email" => name, "password" => password})
     raise BlocIoError, result["message"] unless result.code == 200
     @auth_token = result["auth_token"]
+  end
+
+  def get_me
+    result = self.class.get('/users/me', headers: { "authorization" => @auth_token })
+    JSON.parse(result.body)
   end
 end
