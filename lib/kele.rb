@@ -1,12 +1,13 @@
 require 'httparty'
 require 'json'
 require_relative './errors/bloc_io_error'
+require_relative './raodmap_checkpoint'
 
 class Kele
-  include HTTParty
+  include HTTParty, RoadMapAndCheckPoint
   base_uri 'https://www.bloc.io/api/v1'
 
-  attr_accessor :auth_token, :student_data, :mentor_availability
+  attr_accessor :auth_token, :student_data, :mentor_availability, :roadmap, :checkpoints
 
   def initialize( name, password )
     result = self.class.post('/sessions', :body => {"email" => name, "password" => password})
@@ -26,4 +27,6 @@ class Kele
     result = self.class.get(url, headers: { "authorization" => @auth_token }, :body => {"id" => mentor_id})
     @mentor_availability = JSON.parse(result.body)
   end
+
+
 end
