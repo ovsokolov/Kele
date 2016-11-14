@@ -7,7 +7,7 @@ class Kele
   include HTTParty, RoadMapAndCheckPoint
   base_uri 'https://www.bloc.io/api/v1'
 
-  attr_accessor :auth_token, :student_data, :mentor_availability, :roadmap, :checkpoints
+  attr_accessor :auth_token, :student_data, :mentor_availability, :roadmap, :checkpoints, :messages
 
   def initialize( name, password )
     result = self.class.post('/sessions', :body => {"email" => name, "password" => password})
@@ -26,6 +26,33 @@ class Kele
     url = "/mentors/#{mentor_id}/student_availability"
     result = self.class.get(url, headers: { "authorization" => @auth_token }, :body => {"id" => mentor_id})
     @mentor_availability = JSON.parse(result.body)
+  end
+
+  def get_messages(page_no=0)
+    result = self.class.get('/message_threads', headers: { "authorization" => @auth_token }, :body => {"page" => page_no}) if page_no > 0
+    result = self.class.get('/message_threads', headers: { "authorization" => @auth_token }) if page_no == 0
+    @messages = result
+  end
+
+  def create_message(message_text, message_subject, thread_id=0)
+    student_id = @student_data["id"]
+    mentor_id = @student_data["current_enrollment"]["mentor_id"]
+    if thread_id == 0
+      result = self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "subject" => message_subject, "stripped-text" => message_text})
+    else
+      thread_token = get_thread_token(thread_id)
+      result = self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "token" => thread_token, "subject" => message_subject, "stripped-text" => message_text})
+    end
+  end
+
+  def get_thread_token(thread_id)
+    threads = @messages["items"]
+    threads.each do |thread|
+      if thread["id"] == thread_id
+        return thread["token"]
+      end
+    end
+    return nil
   end
 
 
