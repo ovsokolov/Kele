@@ -55,5 +55,7 @@ class Kele
     return nil
   end
 
+  def create_submission(checkpoint_id,assignment_branch, assignment_commit_link, comment)
+  end
 
 end
