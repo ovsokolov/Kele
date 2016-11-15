@@ -56,6 +56,8 @@ class Kele
   end
 
   def create_submission(checkpoint_id,assignment_branch, assignment_commit_link, comment)
+    enrollment_id = @student_data["current_enrollment"]["id"]
+    result = self.class.post('/checkpoint_submissions', headers: { "authorization" => @auth_token }, :body => {"enrollment_id" => enrollment_id, "checkpoint_id" => checkpoint_id, "assignment_branch" => assignment_branch, "assignment_commit_link" => assignment_commit_link, "comment" => comment})
   end
 
 end
