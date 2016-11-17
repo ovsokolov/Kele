@@ -38,10 +38,10 @@ class Kele
     student_id = @student_data["id"]
     mentor_id = @student_data["current_enrollment"]["mentor_id"]
     if thread_id == 0
-      result = self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "subject" => message_subject, "stripped-text" => message_text})
+      self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "subject" => message_subject, "stripped-text" => message_text})
     else
       thread_token = get_thread_token(thread_id)
-      result = self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "token" => thread_token, "subject" => message_subject, "stripped-text" => message_text})
+      self.class.post('/messages', headers: { "authorization" => @auth_token }, :body => {"user_id" => student_id, "recipient_id" => mentor_id, "token" => thread_token, "subject" => message_subject, "stripped-text" => message_text})
     end
   end
 
@@ -57,7 +57,7 @@ class Kele
 
   def create_submission(checkpoint_id,assignment_branch, assignment_commit_link, comment)
     enrollment_id = @student_data["current_enrollment"]["id"]
-    result = self.class.post('/checkpoint_submissions', headers: { "authorization" => @auth_token }, :body => {"enrollment_id" => enrollment_id, "checkpoint_id" => checkpoint_id, "assignment_branch" => assignment_branch, "assignment_commit_link" => assignment_commit_link, "comment" => comment})
+    self.class.post('/checkpoint_submissions', headers: { "authorization" => @auth_token }, :body => {"enrollment_id" => enrollment_id, "checkpoint_id" => checkpoint_id, "assignment_branch" => assignment_branch, "assignment_commit_link" => assignment_commit_link, "comment" => comment})
   end
 
 end
